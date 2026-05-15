@@ -20,8 +20,5 @@ Repository ini berisi dokumentasi teknis dan alat bantu visual (dashboard mockup
 * **Security**: Security Groups, Snapshots, Image Management
 * **Analytics**: Alibaba Cloud Pricing Calculator
 
-## 📈 Hasil Analisis
-Proyek ini berhasil memetakan bahwa penggunaan model **Subscription** lebih menguntungkan secara finansial jika instans berjalan lebih dari **14 hari** secara konsisten dibandingkan model **Pay-as-you-go**. Selain itu, implementasi *Custom Image* terbukti mampu memangkas waktu persiapan server secara signifikan.
-
 ---
 *Dibuat sebagai bagian dari pembelajaran Cloud Computing dan Manajemen Infrastruktur IT.*
