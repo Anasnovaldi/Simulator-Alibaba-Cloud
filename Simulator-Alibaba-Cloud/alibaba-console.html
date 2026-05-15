@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Alibaba Cloud — ECS Console</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ali-orange: #FF6A00;
+      --ali-orange-light: #FF8C00;
+      --ali-bg: #f5f6f8;
+      --ali-nav: #1a1a2e;
+      --ali-nav2: #16213e;
+      --ali-card: #ffffff;
+      --ali-border: #e8eaed;
+      --ali-text: #1d2129;
+      --ali-muted: #72767d;
+      --ali-success: #00b96b;
+      --ali-danger: #f5222d;
+      --ali-info: #1677ff;
+      --ali-sidebar: #001529;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--ali-bg);
+      color: var(--ali-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== TOP NAV ===== */
+    .topnav {
+      background: var(--ali-nav);
+      height: 50px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 15px;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+    }
+
+    .nav-divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(255,255,255,0.15);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0;
+      flex: 1;
+    }
+
+    .nav-link {
+      color: rgba(255,255,255,0.65);
+      font-size: 13px;
+      padding: 0 14px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .nav-link:hover { color: #fff; background: rgba(255,255,255,0.05); }
+    .nav-link.active { color: var(--ali-orange); border-bottom-color: var(--ali-orange); }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+    }
+
+    .region-tag {
+      background: rgba(255,106,0,0.15);
+      border: 1px solid rgba(255,106,0,0.35);
+      color: var(--ali-orange);
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* ===== SUB NAV ===== */
+    .subnav {
+      background: var(--ali-nav2);
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      height: 38px;
+      gap: 4px;
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.45);
+    }
+
+    .subnav span { color: rgba(255,255,255,0.65); }
+    .subnav .crumb-sep { margin: 0 6px; opacity: 0.35; }
+
+    /* ===== LAYOUT ===== */
+    .layout {
+      display: flex;
+      flex: 1;
+    }
+
+    .sidebar {
+      width: 200px;
+      background: var(--ali-sidebar);
+      padding-top: 8px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-group-title {
+      padding: 12px 16px 4px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: rgba(255,255,255,0.3);
+      font-weight: 600;
+    }
+
+    .sidebar-item {
+      padding: 9px 16px 9px 20px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s;
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-item:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.85); }
+    .sidebar-item.active {
+      background: rgba(255,106,0,0.12);
+      color: var(--ali-orange);
+      border-left-color: var(--ali-orange);
+    }
+
+    .sidebar-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.6;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main {
+      flex: 1;
+      padding: 20px 24px;
+      overflow-y: auto;
+    }
+
+    .page-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ali-text);
+      margin-bottom: 4px;
+    }
+
+    .page-desc {
+      font-size: 13px;
+      color: var(--ali-muted);
+      margin-bottom: 20px;
+    }
+
+    /* ===== INSTANCE CARD ===== */
+    .instance-card {
+      background: var(--ali-card);
+      border: 1px solid var(--ali-border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .instance-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--ali-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fafbfc;
+    }
+
+    .instance-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .instance-title h3 {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .instance-title .instance-id {
+      font-size: 12px;
+      color: var(--ali-muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+    }
+
+    .pill-stopped { background: #f5f5f5; color: #8c8c8c; }
+    .pill-stopped .status-dot { background: #bfbfbf; }
+
+    .pill-running {
+      background: #e6fff8;
+      color: var(--ali-success);
+    }
+
+    .pill-running .status-dot {
+      background: var(--ali-success);
+      box-shadow: 0 0 0 3px rgba(0,185,107,0.2);
+      animation: pulse 1.4s infinite;
+    }
+
+    .pill-terminated { background: #fff1f0; color: var(--ali-danger); }
+    .pill-terminated .status-dot { background: var(--ali-danger); }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 3px rgba(0,185,107,0.25); }
+      50% { box-shadow: 0 0 0 5px rgba(0,185,107,0.1); }
+    }
+
+    /* ===== METRICS GRID ===== */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--ali-border);
+    }
+
+    .metric-cell {
+      padding: 18px 20px;
+      border-right: 1px solid var(--ali-border);
+      position: relative;
+    }
+
+    .metric-cell:last-child { border-right: none; }
+
+    .metric-label {
+      font-size: 11.5px;
+      color: var(--ali-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .metric-tag {
+      background: rgba(22,119,255,0.08);
+      color: var(--ali-info);
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-weight: 600;
+    }
+
+    .metric-value {
+      font-size: 22px;
+      font-weight: 700;
+      font-family: 'DM Mono', monospace;
+      color: var(--ali-text);
+    }
+
+    .metric-unit {
+      font-size: 12px;
+      color: var(--ali-muted);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 400;
+    }
+
+    .metric-sub {
+      font-size: 11px;
+      color: var(--ali-muted);
+      margin-top: 4px;
+    }
+
+    /* CPU Bar */
+    .cpu-bar-wrap {
+      margin-top: 8px;
+      height: 4px;
+      background: #eee;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .cpu-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--ali-success), #52c41a);
+      border-radius: 2px;
+      transition: width 0.8s ease;
+    }
+
+    /* ===== ACTION BAR ===== */
+    .action-bar {
+      padding: 14px 20px;
+      border-top: 1px solid var(--ali-border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fafbfc;
+    }
+
+    .btn {
+      padding: 7px 18px;
+      border: none;
+      border-radius: 5px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--ali-orange);
+      color: white;
+    }
+
+    .btn-primary:hover { background: var(--ali-orange-light); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-danger {
+      background: white;
+      color: var(--ali-danger);
+      border: 1px solid var(--ali-danger);
+    }
+
+    .btn-danger:hover { background: #fff1f0; }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-ghost {
+      background: white;
+      color: var(--ali-text);
+      border: 1px solid var(--ali-border);
+    }
+
+    .btn-ghost:hover { background: #f5f5f5; }
+
+    /* ===== SPEC TABLE ===== */
+    .spec-section {
+      padding: 16px 20px;
+      border-top: 1px solid var(--ali-border);
+    }
+
+    .spec-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ali-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .spec-row {
+      display: flex;
+      font-size: 13px;
+      padding: 5px 0;
+      gap: 12px;
+    }
+
+    .spec-key {
+      color: var(--ali-muted);
+      width: 140px;
+      flex-shrink: 0;
+    }
+
+    .spec-val {
+      color: var(--ali-text);
+      font-weight: 500;
+    }
+
+    .spec-val .mono { font-family: 'DM Mono', monospace; font-size: 12.5px; }
+
+    /* ===== INVOICE ===== */
+    .invoice-card {
+      background: var(--ali-card);
+      border: 1px solid var(--ali-border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      display: none;
+    }
+
+    .invoice-header {
+      background: linear-gradient(135deg, var(--ali-orange) 0%, #ff4500 100%);
+      padding: 16px 20px;
+      color: white;
+    }
+
+    .invoice-header h3 {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .invoice-header p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+
+    .invoice-body { padding: 20px; }
+
+    .invoice-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--ali-border);
+      font-size: 13.5px;
+    }
+
+    .invoice-row:last-of-type { border-bottom: none; }
+    .invoice-row .label { color: var(--ali-muted); }
+    .invoice-row .val { font-weight: 600; font-family: 'DM Mono', monospace; }
+
+    .invoice-total {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: #fff8f5;
+      border: 1px solid rgba(255,106,0,0.2);
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .invoice-total .total-label { font-weight: 700; font-size: 14px; }
+    .invoice-total .total-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--ali-danger);
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* ===== ACTIVITY LOG ===== */
+    .log-card {
+      background: var(--ali-card);
+      border: 1px solid var(--ali-border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .log-header {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--ali-border);
+      font-size: 13px;
+      font-weight: 600;
+      background: #fafbfc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .log-body {
+      padding: 8px 0;
+      max-height: 150px;
+      overflow-y: auto;
+      font-size: 12px;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .log-entry {
+      padding: 5px 18px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      line-height: 1.5;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; } }
+
+    .log-time { color: var(--ali-muted); flex-shrink: 0; }
+    .log-msg-ok { color: var(--ali-success); }
+    .log-msg-err { color: var(--ali-danger); }
+    .log-msg-info { color: var(--ali-info); }
+    .log-msg-warn { color: var(--ali-orange); }
+
+    /* ===== CALC SHORTCUT ===== */
+    .shortcut-bar {
+      background: linear-gradient(135deg, #1a1a2e 60%, #16213e 100%);
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255,106,0,0.15);
+    }
+
+    .shortcut-bar-text h4 { color: #fff; font-size: 14px; font-weight: 600; }
+    .shortcut-bar-text p { color: rgba(255,255,255,0.55); font-size: 12px; margin-top: 2px; }
+
+    .btn-shortcut {
+      background: var(--ali-orange);
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 5px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.2s;
+    }
+
+    .btn-shortcut:hover { background: #ff8c00; transform: translateY(-1px); }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="logo">
+    <svg class="logo-icon" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <text x="0" y="30" font-family="Arial" font-weight="900" font-size="28" fill="#FF6A00">阿里云</text>
+    </svg>
+    <span>Alibaba Cloud</span>
+    <span style="color:rgba(255,255,255,0.3);font-weight:400;font-size:13px">Console</span>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-links">
+    <div class="nav-link">Products</div>
+    <div class="nav-link active">Elastic Compute</div>
+    <div class="nav-link">Storage</div>
+    <div class="nav-link">Networking</div>
+    <div class="nav-link">Monitoring</div>
+  </div>
+  <div class="nav-right">
+    <div class="region-tag">cn-jakarta (Indonesia)</div>
+    <span style="color:rgba(255,255,255,0.4)">|</span>
+    <span>admin_user</span>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="subnav">
+  <span>Console</span>
+  <span class="crumb-sep">›</span>
+  <span>Elastic Compute Service</span>
+  <span class="crumb-sep">›</span>
+  <span style="color:#FF6A00">Instance List</span>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-group-title">Compute</div>
+    <div class="sidebar-item active"><div class="sidebar-dot"></div> Instances</div>
+    <div class="sidebar-item"><div class="sidebar-dot"></div> Launch Templates</div>
+    <div class="sidebar-item"><div class="sidebar-dot"></div> Auto Scaling</div>
+
+    <div class="sidebar-group-title">Storage</div>
+    <div class="sidebar-item"><div class="sidebar-dot"></div> Disks</div>
+    <div class="sidebar-item"><div class="sidebar-dot"></div> Snapshots</div>
+    <div class="sidebar-item"><div class="sidebar-dot"></div> Images</div>
+
+    <div class="sidebar-group-title">Monitoring</div>
+    <div class="sidebar-item"><div class="sidebar-dot"></div> CloudMonitor</div>
+    <div class="sidebar-item"><div class="sidebar-dot"></div> Operation Logs</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="page-title">Instance List</div>
+    <p class="page-desc">Region: Jakarta (cn-jakarta-a) &nbsp;·&nbsp; Measured Service Demo — Track real-time usage & billing</p>
+
+    <!-- SHORTCUT TO CALCULATOR -->
+    <div class="shortcut-bar">
+      <div class="shortcut-bar-text">
+        <h4>💰 Cloud Pricing Calculator</h4>
+        <p>Compare Subscription vs Pay-As-You-Go before purchasing</p>
+      </div>
+      <a href="alibaba-calculator.html" class="btn-shortcut">Open Calculator →</a>
+    </div>
+
+    <!-- ACTIVITY LOG -->
+    <div class="log-card">
+      <div class="log-header">
+        <span>📋 CloudMonitor · Activity Log</span>
+        <span style="font-size:11px;color:#999;font-weight:400;font-family:'DM Mono',monospace" id="logTimestamp">--:--:--</span>
+      </div>
+      <div class="log-body" id="logBody">
+        <div class="log-entry">
+          <span class="log-time">--:--:--</span>
+          <span class="log-msg-info">System ready. Waiting for instance to start...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSTANCE CARD -->
+    <div class="instance-card">
+      <div class="instance-header">
+        <div class="instance-title">
+          <div>
+            <h3>ecs.g7.large — General Purpose</h3>
+            <div class="instance-id">i-bp1<span id="instanceId">xxxxxxxxxxxxxxx</span></div>
+          </div>
+        </div>
+        <div id="statusPill" class="status-pill pill-stopped">
+          <div class="status-dot"></div>
+          <span id="statusText">Stopped</span>
+        </div>
+      </div>
+
+      <!-- METRICS -->
+      <div class="metrics-grid">
+        <div class="metric-cell">
+          <div class="metric-label">CPU Utilization <span class="metric-tag">Auto-Monitor</span></div>
+          <div class="metric-value"><span id="cpuVal">0</span><span class="metric-unit">%</span></div>
+          <div class="cpu-bar-wrap"><div class="cpu-bar-fill" id="cpuBar" style="width:0%"></div></div>
+          <div class="metric-sub">2 vCPU · Intel Xeon</div>
+        </div>
+
+        <div class="metric-cell">
+          <div class="metric-label">Network I/O <span class="metric-tag">Real-time</span></div>
+          <div class="metric-value"><span id="netVal">0.0</span><span class="metric-unit"> Mbps</span></div>
+          <div class="cpu-bar-wrap"><div class="cpu-bar-fill" id="netBar" style="width:0%;background:linear-gradient(90deg,#1677ff,#69b1ff)"></div></div>
+          <div class="metric-sub">8 Gbps bandwidth cap</div>
+        </div>
+
+        <div class="metric-cell">
+          <div class="metric-label">Uptime <span class="metric-tag">Tracking</span></div>
+          <div class="metric-value" id="uptimeVal" style="font-size:18px">00:00:00</div>
+          <div class="metric-sub" id="uptimeSub">Instance not running</div>
+        </div>
+
+        <div class="metric-cell">
+          <div class="metric-label">Billing (PAYG) <span class="metric-tag" style="background:rgba(245,34,45,0.1);color:#f5222d">Usage-Based</span></div>
+          <div class="metric-value" style="color:var(--ali-danger)">¥<span id="costVal">0.000</span></div>
+          <div class="metric-sub">¥ 0.397/hr · Pay-As-You-Go</div>
+        </div>
+      </div>
+
+      <!-- SPEC SECTION -->
+      <div class="spec-section">
+        <div class="spec-title">Instance Configuration</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px">
+          <div>
+            <div class="spec-row"><span class="spec-key">Instance Type</span><span class="spec-val">ecs.g7.large</span></div>
+            <div class="spec-row"><span class="spec-key">Region / Zone</span><span class="spec-val">cn-jakarta-a</span></div>
+            <div class="spec-row"><span class="spec-key">vCPU</span><span class="spec-val">2 vCPU (Intel Xeon)</span></div>
+          </div>
+          <div>
+            <div class="spec-row"><span class="spec-key">Memory</span><span class="spec-val">8 GiB DDR4</span></div>
+            <div class="spec-row"><span class="spec-key">OS</span><span class="spec-val">Alibaba Cloud Linux 3.2104</span></div>
+            <div class="spec-row"><span class="spec-key">Billing</span><span class="spec-val">Pay-As-You-Go (PAYG)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="action-bar">
+        <button class="btn btn-primary" id="startBtn" onclick="startInstance()">▶ Start Instance</button>
+        <button class="btn btn-danger" id="stopBtn" onclick="stopInstance()" disabled>⏹ Release Instance</button>
+        <button class="btn btn-ghost">Restart</button>
+        <button class="btn btn-ghost">Connect</button>
+      </div>
+    </div>
+
+    <!-- INVOICE -->
+    <div class="invoice-card" id="invoiceCard">
+      <div class="invoice-header">
+        <h3>📄 Alibaba Cloud — Usage Invoice</h3>
+        <p>Generated upon instance release · Pay-As-You-Go settlement</p>
+      </div>
+      <div class="invoice-body">
+        <div class="invoice-row">
+          <span class="label">Service</span>
+          <span class="val">Elastic Compute Service (ECS)</span>
+        </div>
+        <div class="invoice-row">
+          <span class="label">Instance Type</span>
+          <span class="val">ecs.g7.large</span>
+        </div>
+        <div class="invoice-row">
+          <span class="label">Region</span>
+          <span class="val">cn-jakarta-a (Indonesia)</span>
+        </div>
+        <div class="invoice-row">
+          <span class="label">Billing Mode</span>
+          <span class="val">Pay-As-You-Go (Measured Service)</span>
+        </div>
+        <div class="invoice-row">
+          <span class="label">Usage Duration</span>
+          <span class="val" id="finalDuration">0s</span>
+        </div>
+        <div class="invoice-row">
+          <span class="label">Rate</span>
+          <span class="val">¥ 0.397 / hour (simulation: ¥0.000110/sec)</span>
+        </div>
+        <div class="invoice-row">
+          <span class="label">CPU Peak</span>
+          <span class="val" id="finalCpu">—</span>
+        </div>
+        <div class="invoice-total">
+          <span class="total-label">Total Charged</span>
+          <span class="total-val">¥ <span id="finalBill">0.000</span></span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  let timer = null, monitorCpu = null, monitorNet = null;
+  let seconds = 0;
+  const rate = 0.000110; // ¥0.397/hr ÷ 3600
+  let cpuPeak = 0;
+
+  function randomId() {
+    return Math.random().toString(36).substr(2,15);
+  }
+
+  function formatTime(s) {
+    const h = String(Math.floor(s/3600)).padStart(2,'0');
+    const m = String(Math.floor((s%3600)/60)).padStart(2,'0');
+    const sc = String(s%60).padStart(2,'0');
+    return `${h}:${m}:${sc}`;
+  }
+
+  function nowStr() {
+    return new Date().toLocaleTimeString('en-GB');
+  }
+
+  function addLog(msg, type='info') {
+    const body = document.getElementById('logBody');
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = `<span class="log-time">${nowStr()}</span><span class="log-msg-${type}">${msg}</span>`;
+    body.prepend(entry);
+    document.getElementById('logTimestamp').textContent = nowStr();
+    if(body.children.length > 20) body.removeChild(body.lastChild);
+  }
+
+  function setStatus(type, text) {
+    const pill = document.getElementById('statusPill');
+    pill.className = 'status-pill pill-' + type;
+    document.getElementById('statusText').textContent = text;
+  }
+
+  function startInstance() {
+    seconds = 0; cpuPeak = 0;
+    document.getElementById('instanceId').textContent = randomId();
+    document.getElementById('invoiceCard').style.display = 'none';
+
+    document.getElementById('startBtn').disabled = true;
+    document.getElementById('stopBtn').disabled = false;
+    setStatus('running', 'Running');
+
+    addLog('Instance starting... Allocating resources.', 'warn');
+    setTimeout(() => addLog('[CloudMonitor] Auto-monitoring activated on ecs.g7.large', 'ok'), 600);
+    setTimeout(() => addLog('[Billing] Pay-As-You-Go billing session started.', 'info'), 1200);
+
+    // Uptime + billing
+    timer = setInterval(() => {
+      seconds++;
+      document.getElementById('uptimeVal').textContent = formatTime(seconds);
+      document.getElementById('uptimeSub').textContent = 'Instance running...';
+      document.getElementById('costVal').textContent = (seconds * rate).toFixed(6);
+    }, 1000);
+
+    // CPU monitor
+    monitorCpu = setInterval(() => {
+      const cpu = Math.floor(Math.random() * 45) + 8;
+      cpuPeak = Math.max(cpuPeak, cpu);
+      document.getElementById('cpuVal').textContent = cpu;
+      document.getElementById('cpuBar').style.width = cpu + '%';
+      document.getElementById('cpuBar').style.background = cpu > 70
+        ? 'linear-gradient(90deg,#f5222d,#ff7875)'
+        : cpu > 45
+          ? 'linear-gradient(90deg,#faad14,#ffd666)'
+          : 'linear-gradient(90deg,#00b96b,#52c41a)';
+      if(cpu > 40) addLog(`[CloudMonitor] CPU spike detected: ${cpu}%`, 'warn');
+    }, 1800);
+
+    // Network monitor
+    monitorNet = setInterval(() => {
+      const net = (Math.random() * 200 + 10).toFixed(1);
+      document.getElementById('netVal').textContent = net;
+      document.getElementById('netBar').style.width = (net/400*100) + '%';
+    }, 2200);
+  }
+
+  function stopInstance() {
+    clearInterval(timer);
+    clearInterval(monitorCpu);
+    clearInterval(monitorNet);
+
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('stopBtn').disabled = true;
+    setStatus('terminated', 'Released');
+    document.getElementById('cpuVal').textContent = '0';
+    document.getElementById('cpuBar').style.width = '0%';
+    document.getElementById('netVal').textContent = '0.0';
+    document.getElementById('netBar').style.width = '0%';
+    document.getElementById('uptimeSub').textContent = 'Instance stopped';
+
+    addLog('[Billing] Session ended. Generating invoice...', 'warn');
+    setTimeout(() => addLog('[Billing] Invoice generated. Total: ¥ ' + (seconds * rate).toFixed(6), 'ok'), 500);
+
+    // Show invoice
+    const total = (seconds * rate).toFixed(6);
+    document.getElementById('finalDuration').textContent = seconds + ' seconds (' + formatTime(seconds) + ')';
+    document.getElementById('finalBill').textContent = total;
+    document.getElementById('finalCpu').textContent = cpuPeak + '% (peak)';
+    document.getElementById('invoiceCard').style.display = 'block';
+    document.getElementById('invoiceCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Init clock
+  setInterval(() => {
+    document.getElementById('logTimestamp').textContent = nowStr();
+  }, 1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Alibaba Cloud — Pricing Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ali-orange: #FF6A00;
+      --ali-nav: #1a1a2e;
+      --ali-nav2: #16213e;
+      --ali-bg: #f0f2f5;
+      --ali-card: #fff;
+      --ali-border: #e4e6eb;
+      --ali-text: #1d2129;
+      --ali-muted: #72767d;
+      --ali-success: #00b96b;
+      --ali-danger: #f5222d;
+      --ali-info: #1677ff;
+      --ali-sub: #722ed1;
+      --ali-payg: #FF6A00;
+      --shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--ali-bg);
+      color: var(--ali-text);
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    .topnav {
+      background: var(--ali-nav);
+      height: 50px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo { display: flex; align-items: center; gap: 10px; color: #fff; font-weight: 700; font-size: 15px; }
+    .nav-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.15); }
+    .nav-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+    .region-tag {
+      background: rgba(255,106,0,0.15);
+      border: 1px solid rgba(255,106,0,0.3);
+      color: var(--ali-orange);
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'DM Mono', monospace;
+    }
+    .back-link {
+      color: rgba(255,255,255,0.6);
+      font-size: 13px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .back-link:hover { color: #fff; }
+
+    /* SUBNAV */
+    .subnav {
+      background: var(--ali-nav2);
+      padding: 0 24px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.45);
+    }
+    .subnav span { color: rgba(255,255,255,0.65); }
+    .subnav .sep { margin: 0 6px; opacity: 0.35; }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+      padding: 32px 24px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      right: -80px; top: -80px;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,106,0,0.15) 0%, transparent 70%);
+    }
+
+    .hero-inner { max-width: 1100px; margin: 0 auto; }
+
+    .hero h1 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .hero p { color: rgba(255,255,255,0.6); font-size: 13.5px; }
+
+    .billing-tabs {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .billing-tab {
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .billing-tab.sub {
+      background: rgba(114,46,209,0.15);
+      border-color: rgba(114,46,209,0.4);
+      color: #b37feb;
+    }
+
+    .billing-tab.sub.active, .billing-tab.sub:hover {
+      background: var(--ali-sub);
+      border-color: var(--ali-sub);
+      color: white;
+    }
+
+    .billing-tab.payg {
+      background: rgba(255,106,0,0.15);
+      border-color: rgba(255,106,0,0.4);
+      color: #ff9a45;
+    }
+
+    .billing-tab.payg.active, .billing-tab.payg:hover {
+      background: var(--ali-orange);
+      border-color: var(--ali-orange);
+      color: white;
+    }
+
+    .billing-tab.both {
+      background: rgba(22,119,255,0.15);
+      border-color: rgba(22,119,255,0.4);
+      color: #69b1ff;
+    }
+    .billing-tab.both.active, .billing-tab.both:hover {
+      background: var(--ali-info);
+      border-color: var(--ali-info);
+      color: white;
+    }
+
+    /* MAIN LAYOUT */
+    .calc-layout {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--ali-card);
+      border: 1px solid var(--ali-border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--ali-border);
+      background: #fafbfc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-header h3 {
+      font-size: 13.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .card-body { padding: 18px; }
+
+    /* FORM */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ali-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .form-select, .form-input {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--ali-border);
+      border-radius: 5px;
+      font-size: 13.5px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--ali-text);
+      background: white;
+      transition: border 0.2s;
+      appearance: none;
+    }
+
+    .form-select:focus, .form-input:focus {
+      outline: none;
+      border-color: var(--ali-orange);
+      box-shadow: 0 0 0 3px rgba(255,106,0,0.1);
+    }
+
+    /* SLIDER */
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 4px;
+      background: #e8e8e8;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px; height: 16px;
+      background: var(--ali-orange);
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(255,106,0,0.4);
+    }
+
+    .slider-val {
+      min-width: 48px;
+      text-align: right;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ali-text);
+    }
+
+    .calc-btn {
+      width: 100%;
+      padding: 11px;
+      background: var(--ali-orange);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: all 0.2s;
+      margin-top: 4px;
+    }
+
+    .calc-btn:hover { background: #ff8c00; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,106,0,0.3); }
+
+    /* BADGE */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 100px;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-sub { background: rgba(114,46,209,0.12); color: var(--ali-sub); }
+    .badge-payg { background: rgba(255,106,0,0.12); color: var(--ali-orange); }
+
+    /* RESULT PANEL */
+    .result-panel { display: none; }
+
+    .billing-card {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      box-shadow: var(--shadow);
+      transition: all 0.3s;
+    }
+
+    .billing-card.winner {
+      border-color: var(--ali-success);
+      box-shadow: 0 4px 20px rgba(0,185,107,0.15);
+    }
+
+    .billing-card-head {
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .billing-card-head.sub-head {
+      background: linear-gradient(135deg, #722ed1, #9254de);
+      color: white;
+    }
+
+    .billing-card-head.payg-head {
+      background: linear-gradient(135deg, #FF6A00, #ff9900);
+      color: white;
+    }
+
+    .billing-card-head h4 { font-size: 14px; font-weight: 700; }
+    .billing-card-head p { font-size: 11.5px; opacity: 0.85; margin-top: 1px; }
+
+    .winner-tag {
+      background: rgba(255,255,255,0.25);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: white;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .billing-card-body {
+      background: white;
+      padding: 16px 18px;
+    }
+
+    .price-display {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      margin-bottom: 14px;
+    }
+
+    .price-currency { font-size: 18px; font-weight: 700; color: var(--ali-muted); }
+    .price-main {
+      font-size: 36px;
+      font-weight: 800;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .price-period { font-size: 13px; color: var(--ali-muted); align-self: center; }
+
+    .price-sub-color { color: var(--ali-sub); }
+    .price-payg-color { color: var(--ali-orange); }
+
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      padding: 7px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    .breakdown-row:last-child { border-bottom: none; }
+    .breakdown-row .bk-label { color: var(--ali-muted); }
+    .breakdown-row .bk-val { font-weight: 600; font-family: 'DM Mono', monospace; }
+
+    .discount-badge {
+      background: #f6ffed;
+      color: var(--ali-success);
+      border: 1px solid #b7eb8f;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* COMPARISON TABLE */
+    .compare-card {
+      margin-top: 20px;
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .compare-table th {
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: var(--ali-muted);
+      border-bottom: 2px solid var(--ali-border);
+      background: #fafbfc;
+    }
+
+    .compare-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .compare-table tr:last-child td { border-bottom: none; }
+
+    .compare-table tr:hover td { background: #fafbfc; }
+
+    .check { color: var(--ali-success); font-weight: 700; }
+    .cross { color: #ccc; }
+    .partial { color: #faad14; }
+
+    /* SAVINGS BOX */
+    .savings-box {
+      background: linear-gradient(135deg, #f6ffed 0%, #e6fff8 100%);
+      border: 1px solid #b7eb8f;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .savings-box h4 { font-size: 14px; font-weight: 700; color: #135200; margin-bottom: 2px; }
+    .savings-box p { font-size: 12px; color: #52c41a; }
+    .savings-amount {
+      font-size: 28px;
+      font-weight: 800;
+      font-family: 'DM Mono', monospace;
+      color: var(--ali-success);
+    }
+
+    .info-box {
+      background: rgba(22,119,255,0.05);
+      border: 1px solid rgba(22,119,255,0.15);
+      border-radius: 6px;
+      padding: 11px 14px;
+      font-size: 12.5px;
+      color: #096dd9;
+      line-height: 1.6;
+      margin-top: 14px;
+    }
+
+    /* ANIMATIONS */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeUp 0.4s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stagger-1 { animation-delay: 0.05s; }
+    .stagger-2 { animation-delay: 0.15s; }
+    .stagger-3 { animation-delay: 0.25s; }
+    .stagger-4 { animation-delay: 0.35s; }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .calc-layout { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <div class="logo">
+    <span style="font-size:18px;color:#FF6A00;font-weight:900">阿</span>
+    Alibaba Cloud
+    <span style="color:rgba(255,255,255,0.3);font-weight:400;font-size:13px">| Calculator</span>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-right">
+    <a href="alibaba-console.html" class="back-link">← Back to Console</a>
+    <div class="region-tag">cn-jakarta</div>
+  </div>
+</nav>
+
+<div class="subnav">
+  <span>Console</span><span class="sep">›</span>
+  <span>Billing Center</span><span class="sep">›</span>
+  <span style="color:#FF6A00">Pricing Calculator</span>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <h1>☁️ Cloud Pricing Calculator</h1>
+    <p>Estimate and compare your cloud costs before purchasing — Subscription vs Pay-As-You-Go</p>
+    <div class="billing-tabs">
+      <div class="billing-tab sub both active" id="tabBoth" onclick="setTab('both')">⚖️ Compare Both</div>
+      <div class="billing-tab sub" id="tabSub" onclick="setTab('sub')">📦 Subscription Only</div>
+      <div class="billing-tab payg" id="tabPayg" onclick="setTab('payg')">⏱ Pay-As-You-Go Only</div>
+    </div>
+  </div>
+</div>
+
+<!-- CALCULATOR -->
+<div class="calc-layout">
+
+  <!-- LEFT: CONFIG PANEL -->
+  <div>
+    <div class="card">
+      <div class="card-header">
+        <h3>⚙️ Service Configuration</h3>
+      </div>
+      <div class="card-body">
+
+        <div class="form-group">
+          <label class="form-label">Service Type</label>
+          <select class="form-select" id="serviceType" onchange="updateRates()">
+            <option value="ecs">ECS — Elastic Compute Service</option>
+            <option value="rds">RDS — Relational Database</option>
+            <option value="oss">OSS — Object Storage Service</option>
+            <option value="slb">SLB — Server Load Balancer</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="specGroup">
+          <label class="form-label">Instance Spec</label>
+          <select class="form-select" id="specType" onchange="updateRates()">
+            <option value="g7l">ecs.g7.large (2vCPU · 8GiB)</option>
+            <option value="g7xl">ecs.g7.xlarge (4vCPU · 16GiB)</option>
+            <option value="g72xl">ecs.g7.2xlarge (8vCPU · 32GiB)</option>
+            <option value="c7l">ecs.c7.large (2vCPU · 4GiB)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Region</label>
+          <select class="form-select" id="region" onchange="updateRates()">
+            <option value="jakarta">Jakarta (cn-jakarta)</option>
+            <option value="singapore">Singapore (ap-southeast-1)</option>
+            <option value="frankfurt">Frankfurt (eu-central-1)</option>
+            <option value="virginia">Virginia (us-east-1)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Subscription Duration</label>
+          <select class="form-select" id="subDuration">
+            <option value="1">1 Month</option>
+            <option value="3">3 Months (5% off)</option>
+            <option value="6">6 Months (10% off)</option>
+            <option value="12" selected>1 Year (15% off)</option>
+            <option value="36">3 Years (30% off)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Estimated Monthly Usage Hours (for PAYG)</label>
+          <div class="slider-row">
+            <input type="range" min="1" max="744" value="200" id="hoursSlider"
+              oninput="document.getElementById('hoursVal').textContent=this.value+' hr'"/>
+            <div class="slider-val" id="hoursVal">200 hr</div>
+          </div>
+          <div style="font-size:11.5px;color:var(--ali-muted);margin-top:5px">
+            744 hr = full month · 160 hr ≈ business hours · 730 hr = avg month
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Number of Instances</label>
+          <div class="slider-row">
+            <input type="range" min="1" max="20" value="1" id="instanceSlider"
+              oninput="document.getElementById('instanceVal').textContent=this.value"/>
+            <div class="slider-val" id="instanceVal">1</div>
+          </div>
+        </div>
+
+        <button class="calc-btn" onclick="calculate()">Calculate Price →</button>
+
+      </div>
+    </div>
+
+    <!-- INFO BOX -->
+    <div class="info-box" style="margin-top:14px">
+      💡 <strong>Measured Service</strong> in cloud computing means you only pay for what you consume.
+      Pay-As-You-Go implements this exactly — resources are metered by the second or hour.
+      Subscription prepays for reserved capacity, typically at a lower per-unit price.
+    </div>
+  </div>
+
+  <!-- RIGHT: RESULTS -->
+  <div>
+
+    <!-- PLACEHOLDER -->
+    <div id="placeholder" class="card" style="text-align:center;padding:60px 20px;color:var(--ali-muted)">
+      <div style="font-size:48px;margin-bottom:12px">🧮</div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:6px;color:#555">Configure & Calculate</div>
+      <div style="font-size:13px">Set your service spec and usage hours on the left,<br>then click Calculate to see a full cost comparison.</div>
+    </div>
+
+    <!-- RESULT PANEL -->
+    <div id="resultPanel" class="result-panel">
+
+      <!-- COMPARISON CARDS -->
+      <div id="compCards" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px"></div>
+
+      <!-- SAVINGS BOX -->
+      <div id="savingsBox" class="savings-box fade-up stagger-3"></div>
+
+      <!-- COMPARISON TABLE -->
+      <div class="card compare-card fade-up stagger-4">
+        <div class="card-header">
+          <h3>📊 Billing Model Comparison</h3>
+        </div>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th style="width:34%">Feature</th>
+              <th>📦 Subscription</th>
+              <th>⏱ Pay-As-You-Go</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Pricing</strong></td>
+              <td><span class="discount-badge" id="subDiscountLabel">15% off</span> prepay</td>
+              <td>Full rate, metered</td>
+            </tr>
+            <tr>
+              <td><strong>Commitment</strong></td>
+              <td>Fixed period (upfront)</td>
+              <td class="check">No commitment</td>
+            </tr>
+            <tr>
+              <td><strong>Flexibility</strong></td>
+              <td class="cross">Low (locked in)</td>
+              <td class="check">High (start/stop freely)</td>
+            </tr>
+            <tr>
+              <td><strong>Best for</strong></td>
+              <td>Stable, always-on workloads</td>
+              <td>Dev/test, variable loads</td>
+            </tr>
+            <tr>
+              <td><strong>Cost at 100% usage</strong></td>
+              <td class="check">Cheaper</td>
+              <td class="cross">More expensive</td>
+            </tr>
+            <tr>
+              <td><strong>Cost at low usage</strong></td>
+              <td class="cross">Wasteful (pay unused)</td>
+              <td class="check">Cheaper (pay only used)</td>
+            </tr>
+            <tr>
+              <td><strong>Auto-release</strong></td>
+              <td class="cross">Manual renewal needed</td>
+              <td class="check">Release anytime</td>
+            </tr>
+            <tr>
+              <td><strong>Measured Service</strong></td>
+              <td class="partial">⚠ Partial (fixed unit)</td>
+              <td class="check">✓ Full implementation</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="padding:12px 18px;font-size:12px;color:var(--ali-muted);border-top:1px solid var(--ali-border);background:#fafbfc">
+          * Prices are estimates for demo purposes. Actual pricing may vary. Visit
+          <a href="#" style="color:var(--ali-orange)">Alibaba Cloud official pricing page</a> for exact rates.
+        </div>
+      </div>
+
+      <!-- MONTHLY COMPARISON TABLE -->
+      <div class="card" style="margin-top:16px">
+        <div class="card-header">
+          <h3>📅 Monthly Cost Over Time</h3>
+          <span id="breakEvenLabel" style="font-size:12px;color:var(--ali-muted)"></span>
+        </div>
+        <div class="card-body" style="padding:0">
+          <table class="compare-table" id="monthlyTable">
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>📦 Subscription</th>
+                <th>⏱ Pay-As-You-Go</th>
+                <th>Difference</th>
+              </tr>
+            </thead>
+            <tbody id="monthlyBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Rates (¥/hr) per spec per region multiplier
+  const BASE_RATES = {
+    ecs: { g7l: 0.397, g7xl: 0.794, g72xl: 1.588, c7l: 0.331 },
+    rds: { g7l: 0.88,  g7xl: 1.76,  g72xl: 3.52,  c7l: 0.65  },
+    oss: { g7l: 0.12,  g7xl: 0.18,  g72xl: 0.24,  c7l: 0.10  },
+    slb: { g7l: 0.22,  g7xl: 0.38,  g72xl: 0.55,  c7l: 0.18  },
+  };
+
+  const REGION_MULT = { jakarta: 1.0, singapore: 1.12, frankfurt: 1.25, virginia: 1.08 };
+
+  const SUB_DISCOUNT = { 1: 0, 3: 0.05, 6: 0.10, 12: 0.15, 36: 0.30 };
+
+  let activeTab = 'both';
+
+  function setTab(t) {
+    activeTab = t;
+    ['both','sub','payg'].forEach(id => {
+      document.getElementById('tab'+id.charAt(0).toUpperCase()+id.slice(1)).classList.remove('active');
+    });
+    document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('active');
+  }
+
+  function updateRates() { /* live-update could go here */ }
+
+  function getBaseRate() {
+    const svc = document.getElementById('serviceType').value;
+    const spec = document.getElementById('specType').value;
+    const region = document.getElementById('region').value;
+    return BASE_RATES[svc][spec] * REGION_MULT[region];
+  }
+
+  function fmt(n) { return '¥ ' + n.toLocaleString('en', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function fmtRaw(n) { return n.toLocaleString('en', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+  function calculate() {
+    const hourlyRate = getBaseRate();
+    const months = parseInt(document.getElementById('subDuration').value);
+    const hours = parseInt(document.getElementById('hoursSlider').value);
+    const instances = parseInt(document.getElementById('instanceSlider').value);
+    const discount = SUB_DISCOUNT[months];
+
+    const totalHours = 730 * months; // avg hours in a month * months
+
+    // Subscription: pay for all hours in period at discounted rate
+    const subTotal = hourlyRate * totalHours * instances * (1 - discount);
+    const subMonthly = subTotal / months;
+
+    // PAYG: pay only for used hours at full rate
+    const paygMonthly = hourlyRate * hours * instances;
+    const paygTotal = paygMonthly * months;
+
+    document.getElementById('subDiscountLabel').textContent = (discount*100).toFixed(0) + '% off';
+
+    // Build result cards
+    const showSub = activeTab !== 'payg';
+    const showPayg = activeTab !== 'sub';
+
+    document.getElementById('placeholder').style.display = 'none';
+    document.getElementById('resultPanel').style.display = 'block';
+
+    const cardsEl = document.getElementById('compCards');
+    cardsEl.innerHTML = '';
+
+    const winner = paygTotal < subTotal ? 'payg' : 'sub';
+    const cols = activeTab === 'both' ? '1fr 1fr' : '1fr';
+    cardsEl.style.gridTemplateColumns = cols;
+
+    if (showSub) {
+      cardsEl.innerHTML += buildBillingCard({
+        type: 'sub',
+        label: '📦 Subscription',
+        desc: months + ' month' + (months>1?'s':'') + ' · ' + (discount*100).toFixed(0) + '% discount',
+        total: subTotal,
+        monthly: subMonthly,
+        breakdown: [
+          { label: 'Hourly Rate (before discount)', val: fmt(hourlyRate) + '/hr' },
+          { label: 'Discount', val: '-' + (discount*100).toFixed(0) + '%' },
+          { label: 'Effective Rate', val: fmt(hourlyRate*(1-discount)) + '/hr' },
+          { label: 'Total Hours (reserved)', val: (totalHours * instances).toLocaleString() + ' hr' },
+          { label: 'Instances', val: instances },
+          { label: 'Total Cost', val: fmt(subTotal) },
+        ],
+        winner: winner === 'sub'
+      });
+    }
+
+    if (showPayg) {
+      cardsEl.innerHTML += buildBillingCard({
+        type: 'payg',
+        label: '⏱ Pay-As-You-Go',
+        desc: hours + ' hr/mo · metered per hour',
+        total: paygTotal,
+        monthly: paygMonthly,
+        breakdown: [
+          { label: 'Hourly Rate (full)', val: fmt(hourlyRate) + '/hr' },
+          { label: 'Usage per Month', val: hours + ' hr' },
+          { label: 'Instances', val: instances },
+          { label: 'Monthly Cost', val: fmt(paygMonthly) },
+          { label: 'Usage vs Full Month', val: ((hours/730)*100).toFixed(0) + '%' },
+          { label: 'Total Cost', val: fmt(paygTotal) },
+        ],
+        winner: winner === 'payg'
+      });
+    }
+
+    // Savings box
+    if (activeTab === 'both') {
+      const saving = Math.abs(paygTotal - subTotal);
+      const cheaperMode = winner === 'sub' ? 'Subscription' : 'Pay-As-You-Go';
+      const usage_pct = ((hours/730)*100).toFixed(0);
+      document.getElementById('savingsBox').style.display = 'flex';
+      document.getElementById('savingsBox').innerHTML = `
+        <div>
+          <h4>🏆 ${cheaperMode} is cheaper for your usage pattern</h4>
+          <p>You use ${usage_pct}% of a full month · ${hours}hr/${730}hr</p>
+          ${winner === 'payg' && hours < 730
+            ? `<p style="margin-top:4px;color:#888;font-size:12px">💡 At ${Math.floor(730*(1-discount))} hr/mo usage, Subscription becomes cheaper</p>`
+            : winner === 'sub'
+              ? `<p style="margin-top:4px;color:#888;font-size:12px">💡 If usage drops below ${Math.floor(730*(1-discount))} hr/mo, consider PAYG</p>`
+              : ''
+          }
+        </div>
+        <div style="text-align:right">
+          <div class="savings-amount">¥ ${fmtRaw(saving)}</div>
+          <div style="font-size:12px;color:#52c41a">saved over ${months} month${months>1?'s':''}</div>
+        </div>
+      `;
+    } else {
+      document.getElementById('savingsBox').style.display = 'none';
+    }
+
+    // Monthly table
+    const tbody = document.getElementById('monthlyBody');
+    tbody.innerHTML = '';
+    for (let m = 1; m <= Math.min(months, 12); m++) {
+      const subCum = subMonthly * m;
+      const paygCum = paygMonthly * m;
+      const diff = paygCum - subCum;
+      const diffStr = diff >= 0
+        ? `<span style="color:var(--ali-success)">PAYG +${fmtRaw(diff)}</span>`
+        : `<span style="color:var(--ali-sub)">SUB +${fmtRaw(-diff)}</span>`;
+      tbody.innerHTML += `
+        <tr>
+          <td style="font-family:'DM Mono',monospace;font-size:12.5px">Month ${m}</td>
+          <td style="font-family:'DM Mono',monospace">${fmt(subCum)}</td>
+          <td style="font-family:'DM Mono',monospace">${fmt(paygCum)}</td>
+          <td style="font-size:12.5px">${diffStr}</td>
+        </tr>
+      `;
+    }
+
+    // Break-even label
+    const beHours = 730 * (1 - discount);
+    document.getElementById('breakEvenLabel').textContent =
+      `Break-even point: ~${Math.floor(beHours)} hr/mo usage`;
+  }
+
+  function buildBillingCard({ type, label, desc, total, monthly, breakdown, winner }) {
+    const colorClass = type === 'sub' ? 'sub-head' : 'payg-head';
+    const winnerTag = winner ? '<span class="winner-tag">✓ Cheaper</span>' : '';
+    const priceColor = type === 'sub' ? 'price-sub-color' : 'price-payg-color';
+    const winnerClass = winner ? 'winner' : '';
+    const rows = breakdown.map(r =>
+      `<div class="breakdown-row"><span class="bk-label">${r.label}</span><span class="bk-val">${r.val}</span></div>`
+    ).join('');
+
+    return `
+      <div class="billing-card ${winnerClass} fade-up stagger-${type==='sub'?'1':'2'}">
+        <div class="billing-card-head ${colorClass}">
+          <div>
+            <h4>${label}</h4>
+            <p>${desc}</p>
+          </div>
+          ${winnerTag}
+        </div>
+        <div class="billing-card-body">
+          <div class="price-display">
+            <span class="price-currency">¥</span>
+            <span class="price-main ${priceColor}">${fmtRaw(monthly)}</span>
+            <span class="price-period">/month</span>
+          </div>
+          <div style="font-size:12px;color:var(--ali-muted);margin-bottom:14px">
+            Total for period: <strong style="color:var(--ali-text)">¥ ${fmtRaw(total)}</strong>
+          </div>
+          ${rows}
+        </div>
+      </div>
+    `;
+  }
+</script>
+</body>
+</html>
