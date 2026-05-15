@@ -1,24 +1,25 @@
 # Alibaba Cloud ECS Strategic Management & Analysis
 
-Repository ini berisi dokumentasi teknis dan alat bantu visual (dashboard mockups) untuk manajemen strategis instans **Alibaba Cloud Elastic Compute Service (ECS)**. Proyek ini bertujuan untuk mendemonstrasikan pemahaman mendalam tentang arsitektur cloud, manajemen siklus hidup instans, dan optimasi biaya. Proyek ini dibuat dengan bantuan AI Claude berdasarkan pengalaman pengguna terhadap course di Alibaba Academy. **AI-assisted Mockup**.
+Repository ini berisi dokumentasi teknis dan alat bantu visual (dashboard mockups) untuk manajemen strategis instans **Alibaba Cloud Elastic Compute Service (ECS)**. Proyek ini mendemonstrasikan pemahaman mendalam tentang arsitektur cloud, manajemen siklus hidup instans, dan optimasi biaya.
 
-## 📂 Struktur Folder
-* `Laporan Teknis/`: Berisi dokumen laporan mendalam mengenai strategi manajemen ECS.
-* `alibaba-calculator.html`: Dashboard interaktif simulasi perhitungan biaya (Pay-as-you-go vs Subscription).
-* `alibaba-console.html`: Visualisasi antarmuka manajemen ECS untuk konfigurasi VPC, VSwitch, dan Security Groups.
+## 📂 Struktur Repositori
+* **`calculator/`**: Berisi simulator interaktif untuk membandingkan model penagihan *Pay-as-you-go* vs *Subscription*.
+* **`console/`**: Dashboard mockup yang mensimulasikan manajemen operasional ECS, pemantauan sumber daya, dan log aktivitas.
+* **`docs/`**: Laporan teknis mendalam mengenai strategi manajemen instans (Format PDF/Docx).
+* **`LICENSE`**: Lisensi MIT yang memberikan izin penggunaan dan modifikasi kode secara terbuka.
 
 ## 🚀 Fitur Utama
-1.  **Analisis Taksonomi Instans**: Penjelasan mendalam mengenai keluarga instans (General Purpose, Compute Optimized, dsb.) dan iterasi generasi hardware.
-2.  **Optimasi Finansial**: Perhitungan titik impas (*Break-Even Point*) untuk pemilihan model penagihan yang paling efisien.
-3.  **Keamanan & Resiliensi**: Implementasi *Release Protection*, *Snapshots*, dan segmentasi jaringan melalui VPC di wilayah Singapura.
-4.  **Deployment Otomatis**: Strategi penggunaan *Custom Image* untuk efisiensi waktu deployment hingga 95%.
+1.  **Analisis Taksonomi Instans**: Penjelasan mengenai keluarga instans (General Purpose, Compute Optimized, dll.) dan iterasi generasi hardware.
+2.  **Optimasi Finansial**: Fitur kalkulator untuk menentukan titik impas (*Break-Even Point*) guna pemilihan model biaya yang paling efisien.
+3.  **Manajemen Siklus Hidup**: Simulasi proses *Start*, *Stop*, hingga *Release* instans dengan pemantauan metrik CPU dan Network secara real-time.
+4.  **Strategi Keamanan**: Implementasi *Release Protection*, *Snapshots*, dan segmentasi jaringan melalui VPC.
 
 ## 🛠️ Teknologi & Layanan
 * **Provider**: Alibaba Cloud
 * **Core Service**: Elastic Compute Service (ECS)
-* **Networking**: Virtual Private Cloud (VPC), VSwitch, Elastic IP (EIP)
-* **Security**: Security Groups, Snapshots, Image Management
-* **Analytics**: Alibaba Cloud Pricing Calculator
+* **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
+* **Networking**: Virtual Private Cloud (VPC), VSwitch, Security Groups
+* **Concepts**: Pay-as-you-go, Subscription, Preemptible Instances, Custom Image Deployment
 
 ---
-*Dibuat sebagai bagian dari pembelajaran Cloud Computing dan Manajemen Infrastruktur IT.*
+*Dibuat oleh Anas Novaldi sebagai bagian dari eksplorasi teknologi Cloud Computing dan Manajemen Infrastruktur IT.*
