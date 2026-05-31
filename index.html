@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Alibaba Cloud — ECS Console</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="Alibabaconsole/alibaba-console.css">
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="logo">
+    <svg class="logo-icon" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <text x="0" y="30" font-family="Arial" font-weight="900" font-size="28" fill="#FF6A00">阿里云</text>
+    </svg>
+    <span>Alibaba Cloud</span>
+    <span style="color:rgba(255,255,255,0.3);font-weight:400;font-size:13px">Console</span>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-links">
+    <div class="nav-link">Products</div>
+    <div class="nav-link active">Elastic Compute</div>
+    <div class="nav-link">Storage</div>
+    <div class="nav-link">Networking</div>
+    <div class="nav-link">Monitoring</div>
+  </div>
+  <div class="nav-right">
+    <div class="region-tag">cn-jakarta (Indonesia)</div>
+    <span style="color:rgba(255,255,255,0.4)">|</span>
+    <span>admin_user</span>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="subnav">
+  <span>Console</span>
+  <span class="crumb-sep">›</span>
+  <span>Elastic Compute Service</span>
+  <span class="crumb-sep">›</span>
+  <span style="color:#FF6A00">Instance List</span>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-group-title">Compute</div>
+    <div class="sidebar-item active"><div class="sidebar-dot"></div> Instances</div>
+    <div class="sidebar-item"><div class="sidebar-dot"></div> Launch Templates</div>
+    <div class="sidebar-item"><div class="sidebar-dot"></div> Auto Scaling</div>
+
+    <div class="sidebar-group-title">Storage</div>
+    <div class="sidebar-item"><div class="sidebar-dot"></div> Disks</div>
+    <div class="sidebar-item"><div class="sidebar-dot"></div> Snapshots</div>
+    <div class="sidebar-item"><div class="sidebar-dot"></div> Images</div>
+
+    <div class="sidebar-group-title">Monitoring</div>
+    <div class="sidebar-item"><div class="sidebar-dot"></div> CloudMonitor</div>
+    <div class="sidebar-item"><div class="sidebar-dot"></div> Operation Logs</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="page-title">Instance List</div>
+    <p class="page-desc">Region: Jakarta (cn-jakarta-a) &nbsp;·&nbsp; Measured Service Demo — Track real-time usage & billing</p>
+
+    <!-- SHORTCUT TO CALCULATOR -->
+    <div class="shortcut-bar">
+      <div class="shortcut-bar-text">
+        <h4>💰 Cloud Pricing Calculator</h4>
+        <p>Compare Subscription vs Pay-As-You-Go before purchasing</p>
+      </div>
+      <a href="Alibabacalculator/alibaba-calculator.html" class="btn-shortcut">Open Calculator →</a>
+    </div>
+
+    <!-- ACTIVITY LOG -->
+    <div class="log-card">
+      <div class="log-header">
+        <span>📋 CloudMonitor · Activity Log</span>
+        <span style="font-size:11px;color:#999;font-weight:400;font-family:'DM Mono',monospace" id="logTimestamp">--:--:--</span>
+      </div>
+      <div class="log-body" id="logBody">
+        <div class="log-entry">
+          <span class="log-time">--:--:--</span>
+          <span class="log-msg-info">System ready. Waiting for instance to start...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSTANCE CARD -->
+    <div class="instance-card">
+      <div class="instance-header">
+        <div class="instance-title">
+          <div>
+            <h3>ecs.g7.large — General Purpose</h3>
+            <div class="instance-id">i-bp1<span id="instanceId">xxxxxxxxxxxxxxx</span></div>
+          </div>
+        </div>
+        <div id="statusPill" class="status-pill pill-stopped">
+          <div class="status-dot"></div>
+          <span id="statusText">Stopped</span>
+        </div>
+      </div>
+
+      <!-- METRICS -->
+      <div class="metrics-grid">
+        <div class="metric-cell">
+          <div class="metric-label">CPU Utilization <span class="metric-tag">Auto-Monitor</span></div>
+          <div class="metric-value"><span id="cpuVal">0</span><span class="metric-unit">%</span></div>
+          <div class="cpu-bar-wrap"><div class="cpu-bar-fill" id="cpuBar" style="width:0%"></div></div>
+          <div class="metric-sub">2 vCPU · Intel Xeon</div>
+        </div>
+
+        <div class="metric-cell">
+          <div class="metric-label">Network I/O <span class="metric-tag">Real-time</span></div>
+          <div class="metric-value"><span id="netVal">0.0</span><span class="metric-unit"> Mbps</span></div>
+          <div class="cpu-bar-wrap"><div class="cpu-bar-fill" id="netBar" style="width:0%;background:linear-gradient(90deg,#1677ff,#69b1ff)"></div></div>
+          <div class="metric-sub">8 Gbps bandwidth cap</div>
+        </div>
+
+        <div class="metric-cell">
+          <div class="metric-label">Uptime <span class="metric-tag">Tracking</span></div>
+          <div class="metric-value" id="uptimeVal" style="font-size:18px">00:00:00</div>
+          <div class="metric-sub" id="uptimeSub">Instance not running</div>
+        </div>
+
+        <div class="metric-cell">
+          <div class="metric-label">Billing (PAYG) <span class="metric-tag" style="background:rgba(245,34,45,0.1);color:#f5222d">Usage-Based</span></div>
+          <div class="metric-value" style="color:var(--ali-danger)">¥<span id="costVal">0.000</span></div>
+          <div class="metric-sub">¥ 0.397/hr · Pay-As-You-Go</div>
+        </div>
+      </div>
+
+      <!-- SPEC SECTION -->
+      <div class="spec-section">
+        <div class="spec-title">Instance Configuration</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px">
+          <div>
+            <div class="spec-row"><span class="spec-key">Instance Type</span><span class="spec-val">ecs.g7.large</span></div>
+            <div class="spec-row"><span class="spec-key">Region / Zone</span><span class="spec-val">cn-jakarta-a</span></div>
+            <div class="spec-row"><span class="spec-key">vCPU</span><span class="spec-val">2 vCPU (Intel Xeon)</span></div>
+          </div>
+          <div>
+            <div class="spec-row"><span class="spec-key">Memory</span><span class="spec-val">8 GiB DDR4</span></div>
+            <div class="spec-row"><span class="spec-key">OS</span><span class="spec-val">Alibaba Cloud Linux 3.2104</span></div>
+            <div class="spec-row"><span class="spec-key">Billing</span><span class="spec-val">Pay-As-You-Go (PAYG)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="action-bar">
+        <button class="btn btn-primary" id="startBtn" onclick="startInstance()">▶ Start Instance</button>
+        <button class="btn btn-danger" id="stopBtn" onclick="stopInstance()" disabled>⏹ Release Instance</button>
+        <button class="btn btn-ghost">Restart</button>
+        <button class="btn btn-ghost">Connect</button>
+      </div>
+    </div>
+
+    <!-- INVOICE -->
+    <div class="invoice-card" id="invoiceCard">
+      <div class="invoice-header">
+        <h3>📄 Alibaba Cloud — Usage Invoice</h3>
+        <p>Generated upon instance release · Pay-As-You-Go settlement</p>
+      </div>
+      <div class="invoice-body">
+        <div class="invoice-row">
+          <span class="label">Service</span>
+          <span class="val">Elastic Compute Service (ECS)</span>
+        </div>
+        <div class="invoice-row">
+          <span class="label">Instance Type</span>
+          <span class="val">ecs.g7.large</span>
+        </div>
+        <div class="invoice-row">
+          <span class="label">Region</span>
+          <span class="val">cn-jakarta-a (Indonesia)</span>
+        </div>
+        <div class="invoice-row">
+          <span class="label">Billing Mode</span>
+          <span class="val">Pay-As-You-Go (Measured Service)</span>
+        </div>
+        <div class="invoice-row">
+          <span class="label">Usage Duration</span>
+          <span class="val" id="finalDuration">0s</span>
+        </div>
+        <div class="invoice-row">
+          <span class="label">Rate</span>
+          <span class="val">¥ 0.397 / hour (simulation: ¥0.000110/sec)</span>
+        </div>
+        <div class="invoice-row">
+          <span class="label">CPU Peak</span>
+          <span class="val" id="finalCpu">—</span>
+        </div>
+        <div class="invoice-total">
+          <span class="total-label">Total Charged</span>
+          <span class="total-val">¥ <span id="finalBill">0.000</span></span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="Alibabaconsole/alibaba-console.js"></script>
+</body>
+</html>
